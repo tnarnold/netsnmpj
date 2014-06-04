@@ -1,0 +1,123 @@
+##
+##
+## 	       Copyright(c) 2003 by Andrew E. Page
+##
+## 		      All Rights Reserved
+##
+## Permission to use, copy, modify, and distribute this software and its
+## documentation for any purpose and without fee is hereby granted,
+## provided that the above copyright notice appears in all copies and that
+## both that copyright notice and this permission notice appear in
+## supporting documentation, and that the name Andrew E. Page not be used
+## in advertising or publicity pertaining to distribution of the software
+## without specific, written prior permission.
+##
+## ANDREW E. PAGE DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+## INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+## EVENT SHALL ANDREW E. PAGE BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+## CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+## USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+## OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+## PERFORMANCE OF THIS SOFTWARE.
+##
+
+!include ..\local.mk
+
+!include $(JNI_SUPPORT_DIR)\wininclude.mk
+
+LIBS=Ws2_32.lib advapi32.lib
+
+CLASSPATH=..\jsrc
+
+JAVAH=$(JDKHOME)\bin\javah
+JAVAC=$(JDKHOME)\bin\javac
+
+JNI_HEADERS=org_netsnmp_NetSNMPSession.h \
+	org_netsnmp_NetSNMP.h \
+	org_netsnmp_NativeOID.h \
+	org_netsnmp_MIB.h \
+	org_netnmp_PDU.h 
+
+SESSION_OBJS =  dir\Win32socketpair.obj \
+		dir\NetSNMPjSession_send.obj \
+		dir\NetSNMPjSession_read.obj \
+		dir\NetSNMPjSession.obj \
+		dir\nativeThread.obj \
+		dir\NetSNMP.obj \
+		dir\NetSNMPPDU.obj \
+		dir\NetSNMPjClasses.obj \
+		dir\session_to_jobject.obj \
+		dir\NetSNMPOID.obj \
+		dir\NetSNMPMIB.obj
+
+LINK_OPT=/NODEFAULTLIB:LIBC /INCREMENTAL:NO
+
+!if "$(TOOL)"=="dbg"
+
+SESSION_OBJECTS=$(SESSION_OBJS:dir=Win32-dbg)
+MIB_OBJECTS=$(MIB_OBJS:dir=Win32-dbg)
+LIBNAME=Win32-dbg\netsnmpj.dll
+LIBS=$(LIBS) /LIBPATH:$(NET_SNMP_HOME)\win32\lib libsnmp.lib /LIBPATH:$(JNI_SUPPORT_DIR)\Win32-dbg jnisupport.lib
+
+!elseif "$(TOOL)"=="opt"
+DEFINES=$(DEFINES) /DNDEBUG
+SESSION_OBJECTS=$(SESSION_OBJS:dir=Win32-opt)
+MIB_OBJECTS=$(MIB_OBJS:dir=Win32-opt)
+LIBNAME=Win32-opt\netsnmpj.dll
+LIBS=$(LIBS) /LIBPATH:$(NET_SNMP_HOME)\win32\lib libsnmp.lib /LIBPATH:$(JNI_SUPPORT_DIR)\Win32-opt jnisupport.lib
+
+!else
+
+!error TOOL is not defined
+
+!endif
+
+
+
+.SUFFIXES: .obj .cc .class .java
+# java -Djava.library.path=$(OBJ_DIR) -cp .;$(CLASSPATH);E:\java\junit3.8.1\junit.jar org.netsnmp.junittests.AllSuites
+# java -Djava.library.path=$(OBJ_DIR) -cp .;$(CLASSPATH) GetSysDescr 192.168.0.3 abecrombe
+
+lib: libs
+
+test: libs
+	java -Djava.library.path=$(OBJ_DIR) -cp .;$(CLASSPATH);$(JUNIT_CLASSPATH) org.netsnmp.junittests.AllSuites
+
+libs:  dirs $(LIBNAME)
+
+$(LIBNAME): $(JNI_HEADERS) $(SESSION_OBJECTS) support  WinMakefile
+	link $(LINK_OPT) $(LINK_DEBUG) /dll /OUT:$@ $(SESSION_OBJECTS) $(LIBS) 
+
+dirs: 
+	- mkdir Win32-opt
+	- mkdir Win32-dbg
+
+support:
+	cd $(JNI_SUPPORT_DIR) && $(MAKE) /f WinMakefile TOOL=$(TOOL)
+
+clean:
+	cd $(JNI_SUPPORT_DIR) && $(MAKE) /f WinMakefile clean
+	del /q Win32-opt\* Win32-dbg\* $(JNI_HEADERS)
+
+org_netsnmp_NetSNMPSession.h: $(CLASSPATH)\org\netsnmp\NetSNMPSession.class
+	$(JAVAH)  -classpath $(CLASSPATH) org.netsnmp.NetSNMPSession
+
+org_netsnmp_NetSNMP.h: $(CLASSPATH)\org\netsnmp\NetSNMP.class
+	$(JAVAH)  -classpath $(CLASSPATH) org.netsnmp.NetSNMP
+
+org_netsnmp_NativeOID.h: $(CLASSPATH)\org\netsnmp\NativeOID.class
+	$(JAVAH)  -classpath $(CLASSPATH) org.netsnmp.NativeOID
+
+org_netsnmp_MIB.h: $(CLASSPATH)\org\netsnmp\MIB.class
+	$(JAVAH) -classpath $(CLASSPATH) org.netsnmp.MIB
+
+org_netnmp_PDU.h: $(CLASSPATH)\org\netsnmp\PDU.class
+	$(JAVAH)  -classpath $(CLASSPATH) org.netsnmp.PDU
+
+headers: org_netnmp_PDU.h org_netsnmp_MIB.h org_netsnmp_NativeOID.h org_netsnmp_NetSNMP.h org_netsnmp_NetSNMPSession.h 
+
+{.}.cc{$(OBJ_DIR)}.obj:
+	$(CCC) /c  /TP $(CCC_OPTS) $(DEFINES) $(INCLUDES) -Fo$@ $<
+
+.java.class:
+	$(JAVAC) -classpath $(CLASSPATH) $<

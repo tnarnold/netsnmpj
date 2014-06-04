@@ -1,0 +1,59 @@
+
+
+.SUFFIXES: .obj .cc .class .java
+
+!include ../local.mk
+
+!include wininclude.mk
+
+
+OBJS =	dir\pdu_jobject.obj \
+	dir\jni_proxy.obj \
+	dir\joid_proxy.obj \
+	dir\sysprintf.obj \
+	dir\jthrow.obj 
+
+!if "$(TOOL)"=="dbg"
+
+OBJECTS=$(OBJS:dir=Win32-dbg)
+CCC_OPTS=/GX /Od /Zi
+
+!elseif "$(TOOL)"=="opt"
+
+OBJECTS=$(OBJS:dir=Win32-opt)
+CCC_OPTS=/GX /Ox
+
+!else
+
+
+!error TOOL is not defined
+
+!endif
+
+LIBNAME=jnisupport.lib
+
+SOURCES=$(OBJS:.obj=.cc)
+
+
+lib: $(OBJ_DIR)/$(LIBNAME)
+
+$(OBJ_DIR)/$(LIBNAME): WinMakefile $(OBJECTS)
+	lib /out:$(OBJ_DIR)/$(LIBNAME) $(OBJECTS)
+
+
+{.}.cc{$(OBJ_DIR)}.obj:
+	$(CCC) /c  /TP $(CCC_OPTS) $(DEFINES) $(INCLUDES) -Fo$@ $<
+
+##
+## TBD moves these targets into a make include
+##
+%.class: %.java
+	javac -classpath $(CLASSPATH) $<
+
+.java.class:
+	$(JAVAC) -classpath $(CLASSPATH) $<
+dirs: 
+	- mkdir $(OBJ_DIR) 
+
+clean:
+	- del Win32-dbg\*.obj Win32-dbg\*.lib Win32-opt\*.obj Win32-opt\*.lib 

@@ -1,0 +1,172 @@
+##
+## 	       Copyright(c) 2003 by Andrew E. Page
+##
+## 		      All Rights Reserved
+##
+## Permission to use, copy, modify, and distribute this software and its
+## documentation for any purpose and without fee is hereby granted,
+## provided that the above copyright notice appears in all copies and that
+## both that copyright notice and this permission notice appear in
+## supporting documentation, and that the name Andrew E. Page not be used
+## in advertising or publicity pertaining to distribution of the software
+## without specific, written prior permission.
+##
+## ANDREW E. PAGE DISCLAIMS ALL WARRANTIES WITH REGARD TO THIS SOFTWARE,
+## INCLUDING ALL IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS, IN NO
+## EVENT SHALL ANDREW E. PAGE BE LIABLE FOR ANY SPECIAL, INDIRECT OR
+## CONSEQUENTIAL DAMAGES OR ANY DAMAGES WHATSOEVER RESULTING FROM LOSS OF
+## USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
+## OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
+## PERFORMANCE OF THIS SOFTWARE.
+##
+
+.SUFFIXES: .java .class
+
+!include ..\wininclude.mk
+
+##
+## copy the local.mk.template file to local.mk and adjust
+## the values according to your own local system as necessary
+##
+##  local.mk should always preceed include.mk
+##
+
+JDK_HOME=
+
+RELEASE_DIR=../release
+DOC_DIR=../docs
+JAVAC_OPTS=-target 1.2
+JAVADOC=javadoc
+JAVADOC_LINK=-link http://java.sun.com/j2se/1.3/docs/api/
+
+SOURCEFORGE_LINK="<a href=\"http://sourceforge.net\"> <img src=\"http://sourceforge.net/sflogo.php?group_id=73136&amp;type=5\" width=\"210\" height=\"62\" border=\"0\" alt=\"SourceForge.net Logo\">"
+
+JAVADOC_OPTS = -use -d $(DOC_DIR) -author $(JAVADOC_LINK) -header $(SOURCEFORGE_LINK)
+
+
+CLASSES = org/netsnmp/examples/GetSysDescr.class \
+	org/netsnmp/swingui/MIBJPanel.class \
+	org/netsnmp/swingui/MIBJPanelListener.class \
+	org/netsnmp/swingui/MIBDialog.class \
+	org/netsnmp/swingui/snmpget.class \
+	org/netsnmp/swingui/snmpgetJPanel.class \
+	org/netsnmp/ASN_TYPE.class \
+	org/netsnmp/DefaultOID.class \
+	org/netsnmp/NativeOID.class \
+	org/netsnmp/MIBItemNotFound.class \
+	org/netsnmp/MIB.class \
+	org/netsnmp/NetSNMPAction.class \
+	org/netsnmp/NetSNMPBadValue.class \
+	org/netsnmp/NetSNMPErrTooBig.class \
+	org/netsnmp/NetSNMPException.class \
+	org/netsnmp/NetSNMPNoResponse.class \
+	org/netsnmp/PDU.class \
+	org/netsnmp/NetSNMPSendError.class \
+	org/netsnmp/NetSNMPSession.class \
+	org/netsnmp/OID.class \
+	org/netsnmp/agentx/AgentX.class \
+	org/netsnmp/ASN/ASNValue.class \
+	org/netsnmp/ASN/ASNFormat.class \
+	org/netsnmp/ASN/COUNTER.class \
+	org/netsnmp/ASN/GAUGE.class \
+	org/netsnmp/ASN/INTEGER.class \
+	org/netsnmp/ASN/IPADDRESS.class \
+	org/netsnmp/ASN/NO_SUCH_INSTANCE.class \
+	org/netsnmp/ASN/NO_SUCH_OBJECT.class \
+	org/netsnmp/ASN/NULL.class \
+	org/netsnmp/ASN/OBJECTID.class \
+	org/netsnmp/ASN/OCTET_STR.class \
+	org/netsnmp/ASN/TIMETICKS.class \
+	org/netsnmp/ASN/UNSIGNED.class \
+	org/netsnmp/util/snmpgetRunner.class \
+	org/netsnmp/junittests/getRunnerTests.class \
+	org/netsnmp/junittests/TimeoutTest.class \
+	org/netsnmp/junittests/AllSuites.class  \
+	org/netsnmp/junittests/SerializeTests.class \
+	org/netsnmp/junittests/SNMPv3Tests.class \
+	org/netsnmp/junittests/AgentXTests.class
+
+
+lib:  $(JLIBNAME) 
+
+##
+## the 'jar i' command is marked as 'ignore' if failure
+## since the option is not supported until java 1.3, but
+## failure will not prevent the library from working.  
+##
+$(JLIBNAME): $(CLASSES) $(JUNIT_CLASSES) WinMakefile
+	jar cf $(JLIBNAME) org\netsnmp\*.class \
+		org\netsnmp\ASN\*.class \
+		org\netsnmp\agentx\*.class \
+		org\netsnmp\util\*.class \
+		org\netsnmp\swingui\*.class \
+		org\netsnmp\examples\*.class \
+		org\netsnmp\junittests\*.class
+	- jar iv $(JLIBNAME)
+
+JUNIT_SRC=e:\java\junit3.8.1\src.jar
+
+.java.class:
+	$(JAVAC) $(JAVAC_OPTS) -classpath .;$(JUNIT_CLASSPATH) $(JAVAC_OPT)  $<
+
+test: $(CLASSES)
+	$(JAVA) -cp $(JUNIT_CLASSPATH) -Djava.library.path=../native/$(OBJ_BASE)-$(TOOL) org.netsnmp.swingui.MIBJPanel
+
+docs:
+	$(JAVADOC) $(JAVADOC_OPTS) org.netsnmp org.netsnmp.swingui org.netsnmp.util org.netsnmp.junittests org.netsnmp.ASN
+
+clean:
+	- del /q /f org\netsnmp\*.class
+	- del /q /f org\netsnmp\ASN\*.class
+	- del /q /f org\netsnmp\util\*.class 
+	- del /q /f org\netsnmp\swingui\*.class 
+	- del /q /f org\netsmmp\examples\*.class 
+	- del /q /f org\netsnmp\junittests\*.class 
+	- del /q /f $(JLIBNAME)
+
+
+##
+## $Log: WinMakefile,v $
+## Revision 1.4  2003/05/05 16:31:13  aepage
+## added classes for agentX support
+##
+## Revision 1.3  2003/05/01 20:01:30  aepage
+## additional classes for testing
+##
+## Revision 1.2  2003/04/13 16:05:18  aepage
+## Added ASNFormat interface
+##
+## Revision 1.1  2003/02/27 23:33:50  aepage
+## Initial checkin
+##
+## Revision 1.5  2003/02/10 21:35:43  aepage
+## fix to allow systems without junit to build
+##
+## Revision 1.4  2003/02/10 21:27:05  aepage
+## redo of a prior fix
+##
+## Revision 1.3  2003/02/10 21:19:42  aepage
+## fix for object directory when testing
+##
+## Revision 1.2  2003/02/10 00:50:39  aepage
+## test fixes
+##
+## Revision 1.1.1.1  2003/02/07 23:56:48  aepage
+## Migration Import
+##
+## Revision 1.5  2003/02/07 23:44:03  aepage
+## small test fudge
+##
+## Revision 1.4  2003/02/07 22:00:42  aepage
+## java doc targets
+##
+## Revision 1.3  2003/02/06 18:12:51  aepage
+## Changes to support use of the 'jikes' compiler.  Added MIBJPanel class.
+##
+## Revision 1.2  2003/02/05 15:16:40  aepage
+## Makefile fixes for integrated and multi-platform make preparations
+##
+## Revision 1.1  2003/02/05 02:22:21  aepage
+## Initial Checkin
+##
+##

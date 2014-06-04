@@ -1,0 +1,53 @@
+
+##
+## local test agent
+##
+org.netsnmp.junittests.agent=localhost
+
+##
+## local trap host, used to launch snmptrapd
+##
+org.netsnmp.junittests.trapHost=localhost:4445
+
+##
+## local test community
+##
+org.netsnmp.junittests.community=public
+
+##
+## local readonly test community
+##
+org.netsnmp.junittests.community_ro=ropublic
+
+
+##
+## installation location of net-snmp
+##
+org.netsnmp.junittests.netsnmpHomeDir=/usr
+
+##
+## Name of the loop back interface on the test
+## host ( interfaces.ifDescr.1)
+##
+org.netsnmp.junittests.loopbackIfName=lo0
+
+##
+## how to start 'snmptrapd'
+##
+org.netsnmp.junittests.trapdCommand=/usr/sbin/snmptrapd -f
+
+##
+## Socket address of the agentX master agent
+##
+org.netsnmp.junittests.agentXSocket=tcp:localhost:9161
+
+##
+## Address to query the master agent for sub-agent tests
+##
+org.netsnmp.junittests.agentXMaster=localhost
+
+##
+## v2c Community used to access master agent
+##
+org.netsnmp.junittests.agentXCommunity=public
+

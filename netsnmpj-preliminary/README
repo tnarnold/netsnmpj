@@ -1,0 +1,31 @@
+
+   netsnmpj is an open source Java library that allows java code to
+perform SNMP v1, v2c, and V3 operations using the net-snmp library.
+It is composed of both java and native code elements.  Please read the
+INSTALL file for details on installation.
+
+SUPPORTED PLATFORMS
+
+The java portions are compatible with java 1.3.1 and above.  Currently
+Linux, Solaris 2.8 and MS-Windows(NT/2k/XP) are the only platforms
+currently built.  However, it should build readily enough on others.
+Unix systems should have net-snmp-5.0.6 or higher installed.  
+
+SOURCE CODE
+
+Source code is available from
+http://sourceforge.net/cvs/?group_id=73136
+
+DEMO
+
+For Linux and Solaris platforms, the snmpget.sh script will launch a
+version of 'snmpget' with a Java Swing user interface.  Queries are
+made through the NetSNMPSession, OID and PDU objects.  The application
+also contains a built-in MIB browser.  The snmpget.bat is the win32
+version of this launching script
+
+DOCUMENTATION
+
+Javadocs for the library are found in docs/index.html or 
+
+http://netsnmpj.sourceforge.net/docs/index.html

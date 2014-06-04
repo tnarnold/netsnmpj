@@ -1,0 +1,61 @@
+
+netsnmpj-0.2.1
+
+   All MIB functions have been moved to libnetsnmpj.so library.
+   Use of libnetsnmpjmib.so is now deprecated.
+
+   Fix for AgentX support where registering more than one or two agent
+was failing.  
+
+   Fix that allows an AgentX object to handle an entire tree instead of
+a single instance.
+
+
+netsnmpj-0.2.0
+
+   Support for sending V1 and V2 traps.  
+
+   Support for creating AgentX sub-agents.
+
+   The library and accompanying tools now support SNMPv3 transactions.  
+
+   The netsnmpj library is now thread-safe.  Transactions can be
+performed across multiple threads.
+
+   The library classes NetSNMPSession, DefaultOID, InstanceOID, and
+PDU are serializable.
+
+   The NetSNMPSession.read() method is deprecated.  All SNMP
+transactions are now performed by a separate thread.  Included with
+this is a 'NetSNMPSyncSession' class that can perform SNMP
+transactions synchronously.
+
+   The Solaris build is built with the Sun CC compiler instead of g++.
+This eliminates the need for the libstdc++ library that comes with the
+gcc distribution.
+
+   A Warnings class has been added that provides diagnostics for
+missing libraries.
+
+   Improvements to internal exception handling.  
+
+   The swing snmpget tool now performs the 'walk' operation as well.
+
+   The swingui package contains useful components for mib browsing and
+session configuration.
+
+   Thanks to the contribution from the NetSNMP
+group(http://www.net-snmp.org) for the collection of mibs included
+with the distribution.  These mibs are supplied for systems, such as
+win32 where netsnmp may not have been installed.  They are the same
+mibs as those found in the net-snmp 5.0.8.  
+
+
+KNOWN ISSUES:
+
+   When a program is using the AgentX features, it cannot perform SNMP
+queries to to other agents.
+
+   AgentX support is not available on Windows systems, yet.  It is
+being worked on.
+

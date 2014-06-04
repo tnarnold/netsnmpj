@@ -1,0 +1,66 @@
+## -*- mode: Makefile -*-
+##
+## Parameters that need to be set from the local system.  Copy this to
+## local.mk and adjust the parameters as necessary to suit your needs
+## for a particular system add 'local.mk' to your .cvsignore file to
+## avoid the anoyance of having it continually listed in update and
+## status
+##
+
+
+
+##
+## Preferred java compiler
+##
+## Warning: the jikes compiler as of version 1.18 for Linux does not
+## produce a correct class file for the 1.2.2 jvm.  Bug reporting on
+## the jikes sites would indicate that jikes 1.19 will correct this
+## problem.
+##
+JAVAC=
+JAVAC_ADDTIONAL_ARGS=
+
+##
+## JUnit is a java library that facilitates unit testing.  If you wish
+## to to run the unit tests, please install this library and set this
+## variable accordingly.
+##
+## Junit can be found at sourceforget.net:
+## http://junit.sourceforge.net
+##
+JUNIT_CLASSPATH=
+
+##
+## the -link option applied to the javadoc tool will autmatically
+## cross link classes and other types to other java documentation
+## This is the 'default' setting, but you may wish to point it to 
+## the javadocs on your local system so that you're always working
+## from a common set of documents.  This is particularlly recommended
+## if you're working with JDK 1.4.x
+##
+JAVADOC_LINK=-link http://java.sun.com/j2se/1.3/docs/api/
+
+
+##
+##  A list of JVM binaries to run tests against.  It is highly
+## recommended that you test on as many JVMs as possible, for as
+## many vendor as possible.  
+##
+## Example:
+## TEST_JVMS=java <jdk1.2.2>/bin/java  <jdk1.3.1>/bin/java <blackdownjvm>/bin/java   etc...
+##
+TEST_JVMS=java
+
+
+##
+## directory where includes and libraries supporting 
+## jni utilities is located
+##
+##   This corresponds to the directory where the netsnmpj-jni_support
+## module was checked out.  
+## 
+##  This is the location of where include.mk will also be found and
+## should be used for any modules that include native components.  
+##
+JNI_SUPPORT_DIR=
+

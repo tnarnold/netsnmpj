@@ -1,0 +1,55 @@
+
+
+unzip the archive
+
+There should be the following components
+
+netsnmpj-RELEASE/netsnmpj.jar
+netsnmpj-RELEASE/SYSTEM/libnetsnmpj.so
+netsnmpj-RELEASE/SYSTEM/libnetsnmpjmib.so
+
+To run any of the programs within netsnmp.jar
+
+cd netsnmpj-0.2.0
+
+java -Djava.library.path=SYSTEM -cp netsnmpj.jar org.netsnmp.swingui.snmpget
+java -Djava.library.path=SYSTEM -cp netsnmpj.jar org.netsnmp.examples.GetSysDescr <host> <community>
+java -Djava.library.path=SYSTEM -cp netsnmpj.jar org.netsnmp.examples. <host> <community>
+
+Where SYSTEM is currently one of:  Win32-x86 linux-i386 or solaris-sparc
+
+The script file snmpget.sh will launch the swing snmpget application
+from the archive directory:
+
+cd netsnmpj-0.2.0
+./snmpget.sh
+
+On Win32 platforms:
+
+.\snmpget.bat
+
+
+Installing as an extension in your existing JRE(Java Runtime Environment)
+
+
+Copy the jar file to JAVAHOME/jre/lib/ext
+And the .so libraries to JAVAHOME/jre/lib/SYSTEM
+
+Your platform should have the net-snmp 5.0.6 or above package
+installed.  If not installed alread, it is available from
+
+http://sourceforge.net/project/showfiles.php?group_id=12694
+
+For win32 systems, the net-snmp libraries have been statically linked
+into the netsnmpj.dll and netsnmpjmib.dll libraries, so a full
+installation of net-snmp on Windows is not necessary.  You may however
+need the MIB files that come with the netsnmp-5.0.x distribution.
+These files are found in netsnmp-5.0.x/mibs.  They have been included
+in this distribution.  They may be copied to a location on your
+windows systems.  Set the environmental variable MIBDIRS to this
+location: For example:
+
+set MIBDIRS=c:\net-snmp-5.0.7\mibs
+
+Additional directories may be specified by separating them with
+semi-colons.
